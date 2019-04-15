@@ -1,0 +1,180 @@
+﻿@model Writers.ViewModels.PersonsDetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="person-details-image"></div>
+<div class="person-details-name">@Model.Person.FullName</div>
+
+<div class="person-details-table">
+    <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Person.BirthDate)</th>
+                <td>@Model.Person.BirthDate.ToString("dd MMMM yyyy")<br />
+                @Model.Person.BirthPlace
+                </td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Person.DieDate)</th>
+                <td>@Model.Person.DieDate.ToString("dd MMMM yyyy")<br />
+                @Model.Person.DiePlace
+            </td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Person.Country)</th>
+                <td>
+                @Model.Person.Country
+            </td>
+        </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Person.Occupation)</th>
+                <td>
+                    @Model.Person.Occupation
+                </td>
+            </tr>
+            @if (Model.Person.Education != null)
+            {
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Person.Education)</th>
+                    <td>
+                        @Model.Person.Education
+                    </td>
+                </tr>
+            }
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Person.Genres)</th>
+                <td>
+                    @foreach(var genre in Model.Person.Genres)
+                    {
+                        <span>
+                            @genre.Title
+                        </span>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>
+                            Table of contents
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ol class="biography-titles">
+                                @foreach(var title in Model.PersonsDetailsInfo.BiographyTitles)
+                                {
+                                    <li>
+                                       <a href="#@title">@title</a> 
+                                    </li>
+                                }
+                            </ol>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    @{
+        int count = 0;
+        for (int i = 0; i < Model.PersonsDetailsInfo.BiographyTitles.Count; i++)
+        {
+            <h5>
+                <span id="@Model.PersonsDetailsInfo.BiographyTitles[i]">
+                    @Model.PersonsDetailsInfo.BiographyTitles[i]
+                </span>
+            </h5>
+
+            for (int j = 0; j < Model.PersonsDetailsInfo.BiographyParagraphsCount[i]; j++)
+            {
+                <p>@Model.PersonsDetailsInfo.BiographyParagraphs[count++]</p>
+
+            }
+        }
+    }
+    
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<h2>Details</h2>
+
+<div>
+    <h4>Person</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Country)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Country)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Century)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Century)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Biography)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Biography)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.FullName }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>*@

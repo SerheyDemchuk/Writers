@@ -1,0 +1,210 @@
+﻿@using Writers.ViewModels
+@using Writers.Extensions
+@using X.PagedList.Mvc;
+@using X.PagedList; 
+
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@model PersonsListViewModel
+
+@{
+    ViewBag.Title = "Personalities";
+}
+
+<div class="container-fluid">
+    <div class="current-search">@ViewBag.CurrentSearchText</div>
+    <div class="search-settings">
+        <span class="search-results">
+            @Model.PersonsListInfo.TotalItemsFound persons found,
+            @(Model.PagedList.HasNextPage ? Model.PersonsListInfo.ItemsOnPage : Model.PersonsListInfo.TotalItemsFound - (Model.PagedList.PageCount - 1) * Model.PersonsListInfo.ItemsOnPage) shown
+
+            @if (Model.PersonsListInfo.TotalItemsFound != 0)
+            {
+                <span>
+                    @*@(!Model.PagedList.HasPreviousPage ? Model.PersonsListInfo.TotalItemsFound : Model.PersonsListInfo.ItemsOnPage)
+
+                        @(!Model.PagedList.HasNextPage ? Model.PersonsListInfo.TotalItemsFound - (Model.PagedList.PageCount - 1) * Model.PersonsListInfo.ItemsOnPage : Model.PersonsListInfo.ItemsOnPage)*@
+
+                    (@(Model.PagedList.PageNumber * Model.PersonsListInfo.ItemsOnPage - Model.PersonsListInfo.ItemsOnPage + 1) - @(Model.PagedList.HasNextPage ? Model.PagedList.PageNumber * Model.PersonsListInfo.ItemsOnPage : Model.PersonsListInfo.TotalItemsFound))
+                </span>
+            }
+
+            
+        </span>
+        <span class="form-settings">
+            @using (Html.BeginForm("Index", "Person", FormMethod.Get))
+            {
+                @Html.Hidden("searchString", Model.PersonsListInfo.SearchString)
+                <span>
+                    sort by:
+                </span>
+                @Html.DropDownList("sortOrder", new List<SelectListItem>()
+                {
+               new SelectListItem { Text = "Full name asc", Value = "fullNameAsc", Selected = true},
+               new SelectListItem { Text = "Full name desc", Value = "fullNameDesc"},
+               new SelectListItem { Text = "Country asc", Value = "countryAsc"},
+               new SelectListItem { Text = "Country desc", Value = "countryDesc"},
+               new SelectListItem { Text = "Century asc", Value = "centuryAsc"},
+               new SelectListItem { Text = "Century desc", Value = "centuryDesc"},
+                })
+                <span>
+                    &nbsp;
+                </span>
+                <span>
+                    persons on the page:
+                </span>
+                @Html.DropDownList("personsOnPage", new List<SelectListItem>()
+                {
+               new SelectListItem { Text = "3", Value = "3"},
+               new SelectListItem { Text = "6", Value = "6"},
+               new SelectListItem { Text = "9", Value = "9"},
+               new SelectListItem { Text = "12", Value = "12"},
+               new SelectListItem { Text = "15", Value = "15"},
+               new SelectListItem { Text = "All", Value = "All", Selected = true},
+                })
+                    <span>
+                        &nbsp;
+                    </span>
+                    <input type="submit" value="apply" />
+            }
+        </span>
+
+    </div>
+    @if (Model.PersonsListInfo.ItemsOnPage < Model.PersonsListInfo.TotalItemsFound)
+    {
+        @Html.PagedListPager(Model.PagedList, page => Url.Action("Index", new { page = page, searchString = Model.PersonsListInfo.SearchString, sortOrder = Model.PersonsListInfo.CurrentSortOrder, personsOnPage = Model.PersonsListInfo.ItemsOnPage }), new X.PagedList.Mvc.Common.PagedListRenderOptions { DisplayLinkToNextPage = X.PagedList.Mvc.Common.PagedListDisplayMode.Never, DisplayLinkToPreviousPage = X.PagedList.Mvc.Common.PagedListDisplayMode.Never })
+    }
+
+</div>
+
+<div class="container-fluid">
+    <div class="card-deck justify-content-center">
+        <div class="row">
+
+            @{
+                int count = 0;
+                foreach (var item in Model.PagedList)
+                {
+                    if (count != 0 & count++ % 3 == 0)
+                    {
+                        @:</div><div class="row">
+                    }
+                    <div class="col">
+                        <div class="card">
+                            <a href='@Url.Action("Details", "Person", new { id = item.FullName})'>
+                                <img src="@item.Image.ImagePath" class="card-img-top" alt="...">
+                            </a>
+                            @*@Html.Image(item.Image.PersonImage, new { @class = "card-img-top" })*@
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                @Html.ActionLink(@Html.DisplayFor(modelItem => item.FullName).ToString(), "Details", new { id = item.FullName})
+                                </h5>
+                                <div class="card-description">
+                                    @item.Country<br/>
+                                    @item.Century cent.
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                }
+                @:</div>
+            }
+
+        </div>
+
+    <div class="bottom-pagination">
+        @if (Model.PersonsListInfo.ItemsOnPage < Model.PersonsListInfo.TotalItemsFound && Model.PersonsListInfo.ItemsOnPage > 3)
+        {
+            @Html.PagedListPager(Model.PagedList, page => Url.Action("Index", new { page = page, sortOrder = Model.PersonsListInfo.CurrentSortOrder, personsOnPage = Model.PersonsListInfo.ItemsOnPage }), new X.PagedList.Mvc.Common.PagedListRenderOptions { DisplayLinkToNextPage = X.PagedList.Mvc.Common.PagedListDisplayMode.Never, DisplayLinkToPreviousPage = X.PagedList.Mvc.Common.PagedListDisplayMode.Never })
+        }
+    </div>
+</div>
+@*@using (Html.BeginForm("Details", "Person", new { id = "Anton Chekhov", par = "Hey" }, FormMethod.Get, null))
+{
+    <input type="submit" value="subm" />
+}*@
+    @*@section Scripts{
+            <script type="text/javascript">
+                alert("hey");
+                $(document).ready(function () {
+                    $('.card').hover(
+              function () {
+                  $('.card-title a').css("color", "#464646");
+                  $('.card-title a').css("text-decoration", "none");
+              },
+                function() {
+                    $( this ).removeClass( "hover" );
+                    }
+            );
+                });
+            </script>
+        }*@
+
+
+    @*<h2>Index</h2>
+
+        <p>
+            @Html.ActionLink("Create New", "Create")
+        </p>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FullName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Country)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Century)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Biography)
+                </th>
+                <th>
+                    Image
+                </th>
+                <th></th>
+            </tr>
+
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Century)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Biography)
+                </td>
+                <td>
+                    @Html.Image(item.Image.PersonImage)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id=item.FullName }) |
+                    @Html.ActionLink("Details", "Details", new { id=item.FullName }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.FullName })
+                </td>
+            </tr>
+        }
+
+        </table>*@
+
+
+
+    @*<div class="card">
+            <img src="~/Content/Images/Dostoevsky.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Fyodor Dostoevsky</h5>
+            </div>
+        </div>
+        <div class="card">
+            <img src="~/Content/Images/Dickens.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Charles Dickens</h5>
+            </div>
+        </div>*@

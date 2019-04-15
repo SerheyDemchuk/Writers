@@ -1,12 +1,19 @@
-﻿body {
+﻿/*body {
     padding-top: 50px;
     padding-bottom: 20px;
+}*/
+
+@media (max-width: 992px) {
+  .form-settings {
+    display:none;
+  }
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding: 20px 15px 0 15px;
+    color: #212529;
+    /*color: rgba(0, 0, 0, 0.6);*/
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -17,8 +24,111 @@
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
+/*input,
 select,
 textarea {
     max-width: 280px;
+}*/
+
+body {
+    background-color: #fff;
 }
+
+.bg-white {
+    padding: 12px 50px;
+    border-bottom: 1px solid #d3d3d3;
+}
+
+.navbar-brand{
+    font-family:'Bookman Old Style';
+    font-size: 22px;
+}
+
+.nav-link{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: rgba(0, 0, 0, 0.6) !important; 
+}
+
+.nav-link:hover{
+    color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.footer{
+    height: 55px;
+    margin-top: 140px;
+    background-color: #F4F5F7;
+    padding: 15px;
+    border-top: 1px solid #d3d3d3;
+}
+
+form.search{
+    margin-left: 20px; 
+}
+
+.search input {
+    width: 350px !important;
+    height: 30px;
+    margin-right: 0 !important;
+    /* border-radius: 0.25rem 0 0 0.25rem !important; */
+}
+
+.search input:focus{
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0;
+}
+
+.search button {
+    height: 30px;
+    margin-left: -28px;
+    background-color: transparent;
+    border: none;
+    border-left: 1px solid #ced4da;
+    border-radius: 0 5px 5px 0px;
+}
+
+.search button:hover{
+    background-color:lightgrey;
+}
+.search button:focus{
+    outline:none;
+}
+
+.bread {list-style-type: none; margin: 15px 0 0 10px;}
+.bread li{display: inline;}
+.bread > li + li::before{content: " > ";}
+.bread a {color: #212529;}
+
+.card-deck {margin: 10px auto;}
+.card { border: none; text-align: center;}
+.card:hover .card-title a{color: #464646; text-decoration: none;}
+.card-img-top {width: 250px; height: 325px;}
+.card-title a {font-size: 18px; color: #212529;}
+.card-description {position: relative; bottom: 10px; font-size: 14px;}
+/*.card-title a:hover {color: #464646; text-decoration: none;}*/
+.search-settings{position:relative;}
+.current-search{font-size: 22px; font-weight: 500; margin-bottom: 30px;}
+.search-results{}
+.form-settings {position:absolute; right:105px; font-size: 12px; }
+.form-settings form {display: inline;}
+.form-settings span {font-size: 13px;}
+.form-settings .apply-settings {background-color:transparent; border: 1px solid #ced4da;}
+
+.pagination{font-size: 14px;}
+.bottom-pagination{position: relative; bottom: 40px;}
+
+.person-details-image{ border: 1px solid #d3d3d3; margin: 15px auto; content: url(Images/Dostoevsky.png);}
+.person-details-name{ font-size: 26px; font-weight: 500; text-align: center;}
+.person-details-table{width: 350px; margin: 15px auto; font-size: 18px;}
+.person-details-table th {width: 20%;}
+.person-details-table td {width: 80%;}
+
+
+table.table-bordered > tbody > tr > th, table.table-bordered > tbody > tr > td {
+  border:1px solid #7e7e7e;
+}   
+/*.container-contents-table{width:400px;}*/
+
+.biography-textarea{width: 100%; height: 500px !important;}    
