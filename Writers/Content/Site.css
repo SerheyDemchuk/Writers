@@ -34,6 +34,8 @@ body {
     background-color: #fff;
 }
 
+footer p {font-size: 14px; padding-left: 15px;}
+
 .bg-white {
     padding: 12px 50px;
     border-bottom: 1px solid #d3d3d3;
@@ -102,12 +104,19 @@ form.search{
 .bread a {color: #212529;}
 
 .card-deck {margin: 10px auto;}
-.card { border: none; text-align: center;}
-.card:hover .card-title a{color: #464646; text-decoration: none;}
-.card-img-top {width: 250px; height: 325px;}
-.card-title a {font-size: 18px; color: #212529;}
-.card-description {position: relative; bottom: 10px; font-size: 14px;}
+.card-list { border: none; text-align: center;}
+.card-list:hover .card-title a{color: #464646; text-decoration: none;}
+.card-list .card-img-top {width: 250px; height: 325px;}
+.card-list .card-title a {font-size: 18px; color: #212529;}
+.card-list .card-description {position: relative; bottom: 10px; font-size: 14px;}
 /*.card-title a:hover {color: #464646; text-decoration: none;}*/
+.card-details {border: 1px solid #d3d3d3;}
+.card-details-left {border: 1px solid #d3d3d3; margin: 5px 15px 5px 0px;}
+.card-details-right {border: 1px solid #d3d3d3; margin: 5px 0px 5px 15px;}
+.card-details .card-img-top, .card-details-left .card-img-top, .card-details-right .card-img-top {padding: 3px;}
+.card-details .card-body, .card-details-left .card-body, .card-details-right .card-body{padding: 2px 10px 5px 10px;}
+.card-details .card-text, .card-details-left .card-text, .card-details-right .card-text{font-size: 13px;}
+
 .search-settings{position:relative;}
 .current-search{font-size: 22px; font-weight: 500; margin-bottom: 30px;}
 .search-results{}
@@ -119,16 +128,33 @@ form.search{
 .pagination{font-size: 14px;}
 .bottom-pagination{position: relative; bottom: 40px;}
 
-.person-details-image{ border: 1px solid #d3d3d3; margin: 15px auto; content: url(Images/Dostoevsky.png);}
-.person-details-name{ font-size: 26px; font-weight: 500; text-align: center;}
-.person-details-table{width: 350px; margin: 15px auto; font-size: 18px;}
+.person-details-image{/*border: 1px solid #d3d3d3;*/ margin: 15px auto; /*content: url(Images/Dostoevsky/Dostoevsky.png);*/}
+.person-details-image img{display:block; margin : 15px auto;}
+.person-details-name{font-size: 26px; font-weight: 500; text-align: center;}
+.person-details-table{width: 350px; margin: 15px auto; font-size: 17px;}
 .person-details-table th {width: 20%;}
 .person-details-table td {width: 80%;}
 
 
-table.table-bordered > tbody > tr > th, table.table-bordered > tbody > tr > td {
-  border:1px solid #7e7e7e;
-}   
+table.table-bordered > tbody > tr > th, table.table-bordered > tbody > tr > td { border:1px solid #7e7e7e;}
+.table-contents h4 {border-bottom: 1px solid #d3d3d3; padding-bottom: 5px; padding-left: 0px; margin: 35px 55px; font-size: 25px;}
+.table-contents table {margin-left: 50px; margin-bottom: 30px;}
+.table-contents table ol {counter-reset: item;}
+.table-contents table li {display: block;}
+.table-contents table li:before{content: counters(item, ".") " "; counter-increment: item;}
+.table-contents table ol {padding-left: 10px;}
+.table-contents table ol ol{padding-left: 10px;}
+
 /*.container-contents-table{width:400px;}*/
 
+.biography-summary {width: 1000px; margin-top: 50px;}
+.biography-paragraphs {width: 1000px;}
+.biography-paragraphs h4 {border-bottom: 1px solid #d3d3d3; padding-bottom: 5px; padding-left: 0px;}
+.biography-paragraphs h5 {padding-left: 5px;}
+.biography-summary p, .biography-paragraphs p {margin-bottom: 7px;}
+.paragraph{margin-bottom: 7px;}
+
+
+/*.biography-paragraphs:first-child{margin-top: 0;}
+.biography-paragraphs{margin-top: 30px;}*/
 .biography-textarea{width: 100%; height: 500px !important;}    

@@ -44,6 +44,19 @@ namespace Writers.Extensions
                         helper.ViewContext.RouteData.Values["Controller"].ToString()));
                     breadcrumb.Append("</li>");
                 }
+                else if(helper.ViewContext.RouteData.Values["Action"].ToString() == "Edit")
+                {
+                    breadcrumb.Append("<li>");
+                    breadcrumb.Append(helper.ActionLink(helper.ViewContext.RouteData.Values["id"].ToString(),
+                        "Details", helper.ViewContext.RouteData.Values["Controller"].ToString(), new { id = helper.ViewContext.RouteData.Values["id"].ToString() }, null));
+                    breadcrumb.Append("</li>");
+
+                    breadcrumb.Append("<li>");
+                    breadcrumb.Append(helper.ActionLink(helper.ViewContext.RouteData.Values["Action"].ToString(),
+                        helper.ViewContext.RouteData.Values["Action"].ToString(),
+                        helper.ViewContext.RouteData.Values["Controller"].ToString()));
+                    breadcrumb.Append("</li>");
+                }
                 else
                 {
                     breadcrumb.Append("<li>");

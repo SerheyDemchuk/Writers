@@ -13,7 +13,7 @@ namespace Writers.DAL
         }
 
         public DbSet<Person> Persons { get; set; }
-        public DbSet<PersonsImages> PersonsImages { get; set; }
+        public DbSet<Images> Images { get; set; }
         public DbSet<Work> Works { get; set; }
         public DbSet<Genre> Genres { get; set; }
 
@@ -21,6 +21,10 @@ namespace Writers.DAL
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Properties<DateTime>().Configure(c => c.HasColumnType("datetime2"));
+
+            //modelBuilder.Entity<Work>().HasKey(p => p.AuthorFullName).Property(p => p.AuthorFullName).HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.None);
+
+            //modelBuilder.Entity<Work>().ToTable("Works");
         }
     }
 }

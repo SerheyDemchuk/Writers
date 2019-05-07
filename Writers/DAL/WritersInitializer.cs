@@ -55,21 +55,21 @@ namespace Writers.DAL
             //    new Biography {PersonFullName = "William Shakespeare", EarlyLife = new List<string>() { "Childhood" } }
             //};
 
-            var personsImages = new List<PersonsImages>()
+            var images = new List<Images>()
             {
-                new PersonsImages {PersonFullName = "William Shakespeare", ImagePath = "/Content/Images/Shakespeare.jpg"},
-                new PersonsImages {PersonFullName = "Fyodor Dostoevsky", ImagePath = "/Content/Images/Dostoevsky.jpg"},
-                new PersonsImages {PersonFullName = "Charles Dickens", ImagePath = "/Content/Images/Dickens.jpg"},
-                new PersonsImages {PersonFullName = "Anton Chekhov", ImagePath = "/Content/Images/Chekhov.jpg"},
-                new PersonsImages {PersonFullName = "Gustave Flaubert", ImagePath = "/Content/Images/Flaubert.jpg"},
-                new PersonsImages {PersonFullName = "Victor Hugo", ImagePath = "/Content/Images/Hugo.jpg"},
-                new PersonsImages {PersonFullName = "Rudyard Kipling", ImagePath = "/Content/Images/Kipling.jpg"},
-                new PersonsImages {PersonFullName = "Erich Maria Remarque", ImagePath = "/Content/Images/Remarque.jpeg"},
-                new PersonsImages {PersonFullName = "Richard Aldington", ImagePath = "/Content/Images/Aldington.jpg"},
-                new PersonsImages {PersonFullName = "Jane Austen", ImagePath = "/Content/Images/Austen.jpg"}
+                new Images {ImagePath = "/Content/Images/Shakespeare.jpg"},
+                new Images {ImagePath = "/Content/Images/Dostoevsky.jpg"},
+                new Images {ImagePath = "/Content/Images/Dickens.jpg"},
+                new Images {ImagePath = "/Content/Images/Chekhov.jpg"},
+                new Images {ImagePath = "/Content/Images/Flaubert.jpg"},
+                new Images {ImagePath = "/Content/Images/Hugo.jpg"},
+                new Images {ImagePath = "/Content/Images/Kipling.jpg"},
+                new Images {ImagePath = "/Content/Images/Remarque.jpeg"},
+                new Images {ImagePath = "/Content/Images/Aldington.jpg"},
+                new Images {ImagePath = "/Content/Images/Austen.jpg"}
             };
 
-            personsImages.ForEach(p => context.PersonsImages.Add(p));
+            images.ForEach(p => context.Images.Add(p));
             context.SaveChanges();
 
             var works = new List<Work>()
@@ -102,6 +102,7 @@ namespace Writers.DAL
             context.SaveChanges();
 
             AddOrUpdateGenre(context, "Fyodor Dostoevsky", "Novel");
+            AddOrUpdateGenre(context, "Fyodor Dostoevsky", "Novella");
         }
 
         public void AddOrUpdateGenre(WritersContext context, string personFullName, string genreTitle)

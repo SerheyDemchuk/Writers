@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Writers.Helpers;
 
 namespace Writers.ViewModels
 {
@@ -12,5 +13,7 @@ namespace Writers.ViewModels
         public List<string> BiographyParagraphs { get; set; }
 
         public List<int> BiographyParagraphsCount { get; set; }
+
+        public BiographyDataNode BiographyDataNode { get; set; }
     }
 }

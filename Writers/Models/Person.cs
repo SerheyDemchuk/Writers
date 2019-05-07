@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Mvc;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -53,8 +54,9 @@ namespace Writers.Models
 
         public string Biography { get; set; }
 
-
+        public virtual ICollection<Work> Works { get; set; }
+        public virtual ICollection<Images> Images { get; set; }
         public virtual ICollection<Genre> Genres { get; set; }
-        public virtual PersonsImages Image { get; set; }
+
     }
 }

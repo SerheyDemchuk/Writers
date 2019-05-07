@@ -1,67 +1,115 @@
 ﻿@model Writers.ViewModels.PersonsDetailsViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = Model.Person.FullName + " - " + "Writers";
 }
 
-<div class="person-details-image"></div>
-<div class="person-details-name">@Model.Person.FullName</div>
+<div class="person-details-card">
+    <div class="person-details-image"> 
+        @if (Model.Person.Images.Count > 1)
+        {
+            <img src="@Model.Person.Images.ToArray()[1].ImagePath" />
+        }
+    </div>
+    <div class="person-details-name">@Model.Person.FullName</div>
 
-<div class="person-details-table">
-    <table class="table table-borderless">
-        <tbody>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Person.BirthDate)</th>
-                <td>@Model.Person.BirthDate.ToString("dd MMMM yyyy")<br />
-                @Model.Person.BirthPlace
-                </td>
-            </tr>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Person.DieDate)</th>
-                <td>@Model.Person.DieDate.ToString("dd MMMM yyyy")<br />
-                @Model.Person.DiePlace
-            </td>
-            </tr>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Person.Country)</th>
-                <td>
-                @Model.Person.Country
-            </td>
-        </tr>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Person.Occupation)</th>
-                <td>
-                    @Model.Person.Occupation
-                </td>
-            </tr>
-            @if (Model.Person.Education != null)
-            {
+    <div class="person-details-table">
+        <table class="table table-borderless">
+            <tbody>
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.Person.Education)</th>
+                    <th>@Html.DisplayNameFor(model => model.Person.BirthDate)</th>
                     <td>
-                        @Model.Person.Education
+                        @Model.Person.BirthDate.ToString("dd MMMM yyyy")<br />
+                        @Model.Person.BirthPlace
                     </td>
                 </tr>
-            }
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Person.Genres)</th>
-                <td>
-                    @foreach(var genre in Model.Person.Genres)
-                    {
-                        <span>
-                            @genre.Title
-                        </span>
-                    }
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Person.DieDate)</th>
+                    <td>
+                        @Model.Person.DieDate.ToString("dd MMMM yyyy")<br />
+                        @Model.Person.DiePlace
+                    </td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Person.Country)</th>
+                    <td>
+                        @Model.Person.Country
+                    </td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Person.Occupation)</th>
+                    <td>
+                        @Model.Person.Occupation
+                    </td>
+                </tr>
+                @if (Model.Person.Education != null)
+                {
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Person.Education)</th>
+                        <td>
+                            @Model.Person.Education
+                        </td>
+                    </tr>
+                }
+                @if (Model.Person.Genres.Count != 0)
+                {
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Person.Genres)</th>
+                        <td>
+                            @foreach (var genre in Model.Person.Genres)
+                            {
+                                <span>
+                                    @genre.Title
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
+@*<div class="container-fluid">
+    <img src="~/fContent/Images/William_Shakespeares_birthplace,_Stratford-upon-Avon_26l2007.jpg" />
 
-<div class="container">
+</div>*@
+
+@* Test *@
+@*<div class="card card-details" style="width: 18rem;">
+    <img src="~/Content/Images/Shakespeare/Shakespeare_Droeshout.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    </div>
+</div>*@
+@* /Test *@
+
+@* Short summary *@
+@*<h4>@Model.Person.FullName</h4>*@
+@if (Model.PersonsDetailsInfo.BiographyDataNode.Paragraph.Count != 0)
+{
+    <div class="container biography-summary">
+        @if (Model.PersonsDetailsInfo.BiographyDataNode.Paragraph.Count != 0)
+        {
+            foreach (string paragraph in Model.PersonsDetailsInfo.BiographyDataNode.Paragraph)
+            {
+                <p>
+                    @Html.Raw(paragraph)
+                </p>
+            }
+        }
+        @*<img src="~/Content/Images/Shakespeare/William_Shakespeares_birthplace,_Stratford-upon-Avon_26l2007.jpg" class="text-center"/>*@
+    </div>
+}
+@* Short summary *@
+
+
+@* Table of contents *@
+<div class="container table-contents">
+    <h4>Biography</h4>
     <div class="row">
         <div class="col-4">
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Person.FullName }, new { @class = "btn btn-light", @style = "margin-left: 55px;" })
             <table class="table table-bordered">
                 <tbody>
                     <tr>
@@ -71,14 +119,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <ol class="biography-titles">
-                                @foreach(var title in Model.PersonsDetailsInfo.BiographyTitles)
-                                {
-                                    <li>
-                                       <a href="#@title">@title</a> 
-                                    </li>
-                                }
-                            </ol>
+                            @ShowTitles(Model.PersonsDetailsInfo.BiographyDataNode)
                         </td>
                     </tr>
                 </tbody>
@@ -86,10 +127,114 @@
         </div>
     </div>
 </div>
+@* Table of contents *@
 
-<div class="container">
-    @{
-        int count = 0;
+
+<div class="container biography-paragraphs">
+
+    @helper ShowFirstLevelData(Writers.Helpers.BiographyDataNode biographyData)
+    {
+        foreach (var data in biographyData.Nodes)
+        {
+            @*@<div class="biography-paragraphs">*@
+                <h4 id="@data.Title">@data.Title</h4>
+
+                if (data.Paragraph.Count != 0)
+                {
+                    foreach (string paragraph in data.Paragraph)
+                    {
+                        <p>
+                            @Html.Raw(paragraph)
+                        </p>
+                    }
+                }
+
+                if (data.Nodes.Count != 0)
+                {
+                @ShowSecondLevelData(data)
+                }
+            @*</div>*@
+        }
+
+    }
+
+    @helper ShowSecondLevelData(Writers.Helpers.BiographyDataNode biographyData)
+    {
+
+        foreach (var data in biographyData.Nodes)
+        {
+
+            <h5 id="@data.Title">@data.Title</h5>
+
+            if (data.Paragraph.Count != 0)
+            {
+                foreach(string paragraph in data.Paragraph)
+                {
+                        <div class="paragraph">
+                            @Html.Raw(paragraph)
+                        </div>
+                }
+            }
+
+                if (data.Nodes.Count != 0)
+                {
+                    @ShowThirdLevelData(data)
+                }
+        }
+
+}
+
+    @helper ShowThirdLevelData(Writers.Helpers.BiographyDataNode biographyData)
+    {
+
+    foreach (var data in biographyData.Nodes)
+    {
+            <h6 id="@data.Title">@data.Title</h6>
+
+        if (data.Paragraph.Count != 0)
+        {
+            foreach (string paragraph in data.Paragraph)
+            {
+                    <p>@paragraph</p>
+            }
+        }
+
+        if (data.Nodes.Count != 0)
+        {
+                @ShowThirdLevelData(data)
+        }
+    }
+
+}
+
+    @ShowFirstLevelData(Model.PersonsDetailsInfo.BiographyDataNode)
+</div>
+
+
+
+
+
+
+@helper ShowTitles(Writers.Helpers.BiographyDataNode biographyData)
+{
+    <ol class="biography-titles">
+        @foreach (var data in biographyData.Nodes)
+        {
+            <li>
+                <a href="#@data.Title">@data.Title</a>
+                @if (data.Nodes.Count != 0)
+                {
+                    @ShowTitles(data)
+                }
+            </li>
+        }
+
+    </ol>
+}
+
+
+@{
+    @*int count = 0;
         for (int i = 0; i < Model.PersonsDetailsInfo.BiographyTitles.Count; i++)
         {
             <h5>
@@ -103,26 +248,8 @@
                 <p>@Model.PersonsDetailsInfo.BiographyParagraphs[count++]</p>
 
             }
-        }
-    }
-    
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        }*@
+}
 
 
 
