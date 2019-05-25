@@ -85,19 +85,16 @@
 @* /Test *@
 
 @* Short summary *@
-@*<h4>@Model.Person.FullName</h4>*@
 @if (Model.PersonsDetailsInfo.BiographyDataNode.Paragraph.Count != 0)
 {
     <div class="container biography-summary">
-        @if (Model.PersonsDetailsInfo.BiographyDataNode.Paragraph.Count != 0)
-        {
-            foreach (string paragraph in Model.PersonsDetailsInfo.BiographyDataNode.Paragraph)
+
+            @foreach (string paragraph in Model.PersonsDetailsInfo.BiographyDataNode.Paragraph)
             {
                 <p>
                     @Html.Raw(paragraph)
                 </p>
             }
-        }
         @*<img src="~/Content/Images/Shakespeare/William_Shakespeares_birthplace,_Stratford-upon-Avon_26l2007.jpg" class="text-center"/>*@
     </div>
 }
@@ -109,7 +106,7 @@
     <h4>Biography</h4>
     <div class="row">
         <div class="col-4">
-                @Html.ActionLink("Edit", "Edit", new { id = Model.Person.FullName }, new { @class = "btn btn-light", @style = "margin-left: 55px;" })
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Person.FullName }, new { @class = "btn btn-light"})
             <table class="table table-bordered">
                 <tbody>
                     <tr>
@@ -120,6 +117,24 @@
                     <tr>
                         <td>
                             @ShowTitles(Model.PersonsDetailsInfo.BiographyDataNode)
+
+                            @helper ShowTitles(Writers.Helpers.BiographyDataNode biographyData)
+                            {
+                            <ol class="biography-titles">
+                                @foreach (var data in biographyData.Nodes)
+                                {
+                                    <li>
+                                        <a href="#@data.Title">@data.Title</a>
+                                        @if (data.Nodes.Count != 0)
+                                        {
+                                            @ShowTitles(data)
+                                        }
+                                    </li>
+                                }
+
+                            </ol>
+                            }
+
                         </td>
                     </tr>
                 </tbody>
@@ -129,34 +144,40 @@
 </div>
 @* Table of contents *@
 
-
+@* Biography text *@
 <div class="container biography-paragraphs">
+
+    @ShowFirstLevelData(Model.PersonsDetailsInfo.BiographyDataNode)
 
     @helper ShowFirstLevelData(Writers.Helpers.BiographyDataNode biographyData)
     {
         foreach (var data in biographyData.Nodes)
         {
             @*@<div class="biography-paragraphs">*@
+    
+            if (data.Title != "References")
+            {
                 <h4 id="@data.Title">@data.Title</h4>
+            }
 
-                if (data.Paragraph.Count != 0)
+            if (data.Paragraph.Count != 0)
+            {
+                foreach (string paragraph in data.Paragraph)
                 {
-                    foreach (string paragraph in data.Paragraph)
-                    {
-                        <p>
-                            @Html.Raw(paragraph)
-                        </p>
-                    }
+                    <div class="paragraph">
+                        @Html.Raw(paragraph)
+                    </div>
                 }
+            }
 
-                if (data.Nodes.Count != 0)
-                {
-                @ShowSecondLevelData(data)
-                }
-            @*</div>*@
-        }
-
+            if (data.Nodes.Count != 0)
+            {
+                    @ShowSecondLevelData(data)
+            }
+        @*</div>*@
     }
+
+}
 
     @helper ShowSecondLevelData(Writers.Helpers.BiographyDataNode biographyData)
     {
@@ -195,42 +216,37 @@
         {
             foreach (string paragraph in data.Paragraph)
             {
-                    <p>@paragraph</p>
+                    <div class="paragraph">
+                    @Html.Raw(paragraph)
+                    </div>
             }
-        }
-
-        if (data.Nodes.Count != 0)
-        {
-                @ShowThirdLevelData(data)
         }
     }
 
 }
 
-    @ShowFirstLevelData(Model.PersonsDetailsInfo.BiographyDataNode)
 </div>
+@* Biography text *@
 
-
-
-
-
-
-@helper ShowTitles(Writers.Helpers.BiographyDataNode biographyData)
+@* References *@
+@if (Model.PersonsDetailsInfo.BiographyDataNode.Reference.Count != 0)
 {
-    <ol class="biography-titles">
-        @foreach (var data in biographyData.Nodes)
-        {
-            <li>
-                <a href="#@data.Title">@data.Title</a>
-                @if (data.Nodes.Count != 0)
-                {
-                    @ShowTitles(data)
-                }
-            </li>
-        }
-
-    </ol>
+    <div class="container biography-references">
+        <h4 id="References">References</h4>
+        <ul>
+            @foreach (string reference in Model.PersonsDetailsInfo.BiographyDataNode.Reference)
+            {
+                <li>
+                    @Html.Raw(reference)
+                </li>
+            }
+        </ul>
+        @*<img src="~/Content/Images/Shakespeare/William_Shakespeares_birthplace,_Stratford-upon-Avon_26l2007.jpg" class="text-center"/>*@
+    </div>
 }
+@* References *@
+
+
 
 
 @{

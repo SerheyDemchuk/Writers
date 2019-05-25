@@ -7,14 +7,11 @@ namespace Writers.Models
 {
     public class Work
     {
-        //public int WorkID { get; set; }
-
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string AuthorFullName { get; set; }
+        public int WorkID { get; set; }
         public string Title { get; set; }
         public int ReleaseYear { get; set; }
         public string ReleasePlace { get; set; }
+        public string AuthorFullName { get; set; }
 
         public virtual Person Person { get; set; }
         public virtual ICollection<Genre> Genres { get; set; }

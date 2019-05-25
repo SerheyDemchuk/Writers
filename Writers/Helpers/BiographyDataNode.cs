@@ -13,11 +13,14 @@ namespace Writers.Helpers
 
         public List<string> Paragraph { get; set; }
 
+        public List<string> Reference { get; set; }
+
         public BiographyDataNode()
         {
             Nodes = new List<BiographyDataNode>();
             Title = string.Empty;
             Paragraph = new List<string>();
+            Reference = new List<string>();
         }
 
     }

@@ -11,6 +11,7 @@
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
+    font-family: Geneva, Arial, Helvetica, sans-serif;
     padding: 20px 15px 0 15px;
     color: #212529;
     /*color: rgba(0, 0, 0, 0.6);*/
@@ -98,7 +99,7 @@ form.search{
     outline:none;
 }
 
-.bread {list-style-type: none; margin: 15px 0 0 10px;}
+.bread {font-family: Geneva, Arial, Helvetica, sans-serif; list-style-type: none; margin: 15px 0 0 10px;}
 .bread li{display: inline;}
 .bread > li + li::before{content: " > ";}
 .bread a {color: #212529;}
@@ -135,24 +136,30 @@ form.search{
 .person-details-table th {width: 20%;}
 .person-details-table td {width: 80%;}
 
-
+.table-contents{width: 1000px; font-size: 14px;}
 table.table-bordered > tbody > tr > th, table.table-bordered > tbody > tr > td { border:1px solid #7e7e7e;}
-.table-contents h4 {border-bottom: 1px solid #d3d3d3; padding-bottom: 5px; padding-left: 0px; margin: 35px 55px; font-size: 25px;}
-.table-contents table {margin-left: 50px; margin-bottom: 30px;}
+.table-contents h4 {border-bottom: 1px solid #d3d3d3; padding-bottom: 5px; padding-left: 0px; margin-top: 35px; font-size: 22px;}
+.table-contents table {margin-top: 30px;}
 .table-contents table ol {counter-reset: item;}
 .table-contents table li {display: block;}
-.table-contents table li:before{content: counters(item, ".") " "; counter-increment: item;}
+.table-contents table li a {color: #212529;}
 .table-contents table ol {padding-left: 10px;}
-.table-contents table ol ol{padding-left: 10px;}
+.table-contents table ol li:before {content: counters(item, ".")" "; counter-increment: item;}
+.table-contents table ol li a{padding-left: 2px;}
+.table-contents table ol ol {padding-left: 15px;}
+.table-contents table ol ol li a{padding-left: 3px;}
 
 /*.container-contents-table{width:400px;}*/
 
-.biography-summary {width: 1000px; margin-top: 50px;}
-.biography-paragraphs {width: 1000px;}
-.biography-paragraphs h4 {border-bottom: 1px solid #d3d3d3; padding-bottom: 5px; padding-left: 0px;}
-.biography-paragraphs h5 {padding-left: 5px;}
+.biography-summary {width: 1000px; margin-top: 50px; font-size: 14px;}
+.biography-paragraphs, .biography-references {width: 1000px; font-size: 14px;}
+.biography-paragraphs h4 {font-size: 22px; border-bottom: 1px solid #d3d3d3; padding-bottom: 5px; padding-left: 0px; margin-top: 25px;}
+.biography-paragraphs h4:first-child {margin-top: 20px;}
+.biography-paragraphs h5 {font-size: 18px; margin-top: 15px; margin-left: 5px;}
 .biography-summary p, .biography-paragraphs p {margin-bottom: 7px;}
 .paragraph{margin-bottom: 7px;}
+.biography-references{font-size: 13px;}
+.biography-references h4{border-bottom: 1px solid #d3d3d3; padding-bottom: 5px; padding-left: 0px; margin-top: 35px; font-size: 22px;}
 
 
 /*.biography-paragraphs:first-child{margin-top: 0;}

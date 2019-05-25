@@ -189,6 +189,10 @@
     <Compile Include="Migrations\201905031548172_FixedImagesCollection.Designer.cs">
       <DependentUpon>201905031548172_FixedImagesCollection.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905250927215_FixedWorkModel.cs" />
+    <Compile Include="Migrations\201905250927215_FixedWorkModel.Designer.cs">
+      <DependentUpon>201905250927215_FixedWorkModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Biography.cs" />
     <Compile Include="Models\Genre.cs" />
@@ -345,6 +349,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905031548172_FixedImagesCollection.resx">
       <DependentUpon>201905031548172_FixedImagesCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905250927215_FixedWorkModel.resx">
+      <DependentUpon>201905250927215_FixedWorkModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

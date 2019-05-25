@@ -8,11 +8,11 @@ namespace Writers.ViewModels
 {
     public class PersonsDetailsInfo
     {
-        public List<string> BiographyTitles { get; set; }
+        //public List<string> BiographyTitles { get; set; }
 
-        public List<string> BiographyParagraphs { get; set; }
+        //public List<string> BiographyParagraphs { get; set; }
 
-        public List<int> BiographyParagraphsCount { get; set; }
+        //public List<int> BiographyParagraphsCount { get; set; }
 
         public BiographyDataNode BiographyDataNode { get; set; }
     }

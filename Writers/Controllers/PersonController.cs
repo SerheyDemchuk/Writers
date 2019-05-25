@@ -106,6 +106,8 @@ namespace Writers.Controllers
                 }
             }
 
+            var res = persons.ToList();
+
             var pageSize = personsOnPage ?? persons.Count();
             var pageNumber = page ?? 1;
 
@@ -180,7 +182,7 @@ namespace Writers.Controllers
             return View(model);
         }
 
-        // Parse input string 
+        // Parse biography string from database
         // Extract headers and paragraphs 
         BiographyDataNode ExtractBiography(Person person)
         {
@@ -221,8 +223,17 @@ namespace Writers.Controllers
                 int startIndex = 0;
                 int stopIndex = 1;
 
-                // Find and complete images
+                // Find and prepare images
                 FindImages(person);
+
+                // Find and prepare links
+                FindLinks(person);
+
+                // Find and prepare lists
+                FindLists(person);
+
+                // Find References section
+                BiographyData.Reference = FindReferencesSection(person);
 
                 // Extract summary if it exists
                 for (int i = 0; i < person.Biography.Length - 1; i++)
@@ -241,221 +252,263 @@ namespace Writers.Controllers
                     }
                 }
 
-                // Extract titles and paragraphs
-                for (int i = startIndex; i < person.Biography.Length - 1; i++)
-                {
-                    if (person.Biography[i] == '^')
+                    // Extract titles and paragraphs
+                    for (int i = startIndex; i < person.Biography.Length - 1; i++)
                     {
-
-                        startIndex = i + 1;
-                        stopIndex = i + 2;
-                        while (person.Biography[stopIndex] != '\r')
-                            stopIndex++;
-
-                        //BiographyTitles.Add(person.Biography.Substring(startIndex, stopIndex - startIndex));
-
-                        firstLevelTitle = person.Biography.Substring(startIndex, stopIndex - startIndex);
-                        i = stopIndex;
-
-                        for (int j = stopIndex; j < person.Biography.Length - 1; j++)
+                        if (person.Biography[i] == '^')
                         {
-                            if ((person.Biography[j] == '\r' && person.Biography[j + 1] == '\n' && person.Biography[j + 2] == '\r' && person.Biography[j + 3] == '\n' && person.Biography[j + 4] == '^') || (j == person.Biography.Length - 2))
+
+                            startIndex = i + 1;
+                            stopIndex = i + 2;
+                            while (person.Biography[stopIndex] != '\r')
+                                stopIndex++;
+
+                            //Extracting first level title
+                            firstLevelTitle = person.Biography.Substring(startIndex, stopIndex - startIndex);
+                            i = stopIndex;
+
+                            //Searching for first level paragraphs and second level nodes
+                            for (int j = stopIndex; j < person.Biography.Length - 1; j++)
                             {
-                                if (firstLevelParagraphsCounter != 0 && firstLevelParagraphs.Count == 0)
-                                    firstLevelParagraphs.Add(person.Biography.Substring(i + 2, j - i));
-
-                                i = j - 1;
-
-                                if (firstLevelParagraphs.Count != 0)
+                                //End of current first level node or end of biography
+                                if ((person.Biography[j] == '\r' && person.Biography[j + 1] == '\n' && person.Biography[j + 2] == '\r' && person.Biography[j + 3] == '\n' && person.Biography[j + 4] == '^') || (j == person.Biography.Length - 5))
                                 {
-                                    FullFirstLevelParagraphs = CompleteParagraphs(firstLevelParagraphs);
-                                }
+                                    if (firstLevelParagraphsCounter != 0 && firstLevelParagraphs.Count == 0)
+                                        firstLevelParagraphs.Add(person.Biography.Substring(i + 2, j - i));
 
-                                FullSecondLevelParagraphs = CompleteParagraphs(secondLevelParagraphs);
+                                    i = j - 1;
 
-
-                                for (int c = 0; c < secondLevelTitles.Count; c++)
-                                {
-                                    secondLevelNodes.Add(new BiographyDataNode { Title = secondLevelTitles[c], Paragraph = new List<string>(FullSecondLevelParagraphs[c]) });
-                                }
-
-
-                                BiographyData.Nodes.Add(new BiographyDataNode()
-                                {
-                                    Title = firstLevelTitle,
-                                    Paragraph = FullFirstLevelParagraphs.Count != 0 ? FullFirstLevelParagraphs[0] : new List<string>(),
-                                    Nodes = new List<BiographyDataNode>(secondLevelNodes)
-                                });
-
-                                firstLevelParagraphs.Clear();
-                                secondLevelParagraphs.Clear();
-                                secondLevelNodes.Clear();
-                                secondLevelTitles.Clear();
-                                FullFirstLevelParagraphs.Clear();
-
-                                break;
-                            }
-
-                            else if (person.Biography[j + 2] == '^' && person.Biography[j + 3] == '^')
-                            {
-                                if (firstLevelParagraphsCounter != 0)
-                                {
-                                    firstLevelParagraphs.Add(person.Biography.Substring(i + 2, j - i));
-                                    firstLevelParagraphsCounter = 0;
-                                }
-
-                                startIndex = j + 4;
-                                stopIndex = j + 5;
-                                while (person.Biography[stopIndex] != '\r')
-                                    stopIndex++;
-                                secondLevelTitles.Add(person.Biography.Substring(startIndex, stopIndex - startIndex));
-                                j = stopIndex;
-
-
-                                for (int z = stopIndex; z < person.Biography.Length - 1; z++)
-                                {
-                                    if ((person.Biography[z] == '\r' && person.Biography[z + 1] == '\n' && person.Biography[z + 2] == '\r' && person.Biography[z + 3] == '\n' && person.Biography[z + 4] == '^') || (z == person.Biography.Length - 2))
+                                    if (firstLevelParagraphs.Count != 0)
                                     {
-                                        if (secondLevelParagraphsCounter != 0 && thirdLevelTitles.Count == 0)
-                                        {
-                                            secondLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
-                                            secondLevelParagraphsCounter = 0;
-                                        }
-                                        else if (thirdLevelTitles.Count != 0)
-                                        {
-                                            thirdLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
-                                            thirdLevelParagraphsCounter = 0;
-
-                                            if (secondLevelParagraphs.Count != 0)
-                                            {
-                                                FullSecondLevelParagraphs = CompleteParagraphs(secondLevelParagraphs);
-                                            }
-
-                                            FullThirdLevelParagraphs = CompleteParagraphs(thirdLevelParagraphs);
-
-                                            for (int c = 0; c < thirdLevelTitles.Count; c++)
-                                            {
-                                                thirdLevelNodes.Add(new BiographyDataNode { Title = thirdLevelTitles[c], Paragraph = new List<string>(FullThirdLevelParagraphs[c]) });
-                                            }
-
-                                            foreach (string secondLevelTitle in secondLevelTitles)
-                                            {
-                                                secondLevelNodes.Add(new BiographyDataNode
-                                                {
-                                                    Title = secondLevelTitle,
-                                                    Paragraph = FullSecondLevelParagraphs[0],
-                                                    Nodes = new List<BiographyDataNode>(thirdLevelNodes)
-                                                });
-                                            }
-
-                                            secondLevelTitles.Clear();
-                                            thirdLevelTitles.Clear();
-                                            secondLevelParagraphs.Clear();
-                                            thirdLevelParagraphs.Clear();
-                                            FullThirdLevelParagraphs.Clear();
-                                        }
-
-                                        j = z - 1;
-                                        break;
+                                        FullFirstLevelParagraphs = CompleteParagraphs(firstLevelParagraphs);
                                     }
-                                    else if (person.Biography[z + 2] == '^' && person.Biography[z + 3] == '^' && person.Biography[z + 4] != '^')
+
+                                    FullSecondLevelParagraphs = CompleteParagraphs(secondLevelParagraphs);
+
+
+                                    for (int c = 0; c < secondLevelTitles.Count; c++)
                                     {
+                                        secondLevelNodes.Add(new BiographyDataNode { Title = secondLevelTitles[c], Paragraph = new List<string>(FullSecondLevelParagraphs[c]) });
+                                    }
 
-                                        if (secondLevelParagraphsCounter != 0 && thirdLevelTitles.Count == 0)
+
+                                    BiographyData.Nodes.Add(new BiographyDataNode()
+                                    {
+                                        Title = firstLevelTitle,
+                                        Paragraph = FullFirstLevelParagraphs.Count != 0 ? FullFirstLevelParagraphs[0] : new List<string>(),
+                                        Nodes = new List<BiographyDataNode>(secondLevelNodes)
+                                    });
+
+                                    firstLevelParagraphs.Clear();
+                                    secondLevelParagraphs.Clear();
+                                    secondLevelNodes.Clear();
+                                    secondLevelTitles.Clear();
+                                    FullFirstLevelParagraphs.Clear();
+
+                                    break;
+                                }
+
+                                //Second level node
+                                else if (person.Biography[j + 2] == '^' && person.Biography[j + 3] == '^')
+                                {
+                                    if (firstLevelParagraphsCounter != 0)
+                                    {
+                                        firstLevelParagraphs.Add(person.Biography.Substring(i + 2, j - i));
+                                        firstLevelParagraphsCounter = 0;
+                                    }
+
+                                    startIndex = j + 4;
+                                    stopIndex = j + 5;
+                                    while (person.Biography[stopIndex] != '\r')
+                                        stopIndex++;
+
+                                    //Adding current second level title to the list
+                                    secondLevelTitles.Add(person.Biography.Substring(startIndex, stopIndex - startIndex));
+                                    j = stopIndex;
+
+                                    //Searching for second and third level nodes 
+                                    for (int z = stopIndex; z < person.Biography.Length - 1; z++)
+                                    {
+                                        //End of current first level node or end of biography
+                                        if ((person.Biography[z] == '\r' && person.Biography[z + 1] == '\n' && person.Biography[z + 2] == '\r' && person.Biography[z + 3] == '\n' && person.Biography[z + 4] == '^') || (z == person.Biography.Length - 5))
                                         {
-                                            secondLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
-                                            secondLevelParagraphsCounter = 0;
-                                        }
-
-                                        if (thirdLevelTitles.Count != 0)
-                                        {
-                                            thirdLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
-                                            thirdLevelParagraphsCounter = 0;
-                                        }
-
-                                        j = z - 1;
-
-                                        if (thirdLevelTitles.Count != 0)
-                                        {
-
-                                            if (secondLevelParagraphs.Count != 0)
+                                            if (secondLevelParagraphsCounter != 0 && thirdLevelTitles.Count == 0)
                                             {
-                                                FullSecondLevelParagraphs = CompleteParagraphs(secondLevelParagraphs);
+                                                secondLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
+                                                secondLevelParagraphsCounter = 0;
                                             }
-
-                                            FullThirdLevelParagraphs = CompleteParagraphs(thirdLevelParagraphs);
-
-                                            for (int c = 0; c < thirdLevelTitles.Count; c++)
+                                            else if (thirdLevelTitles.Count != 0)
                                             {
-                                                thirdLevelNodes.Add(new BiographyDataNode { Title = thirdLevelTitles[c], Paragraph = new List<string>(FullThirdLevelParagraphs[c]) });
-                                            }
+                                                thirdLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
+                                                thirdLevelParagraphsCounter = 0;
 
-                                            foreach (string secondLevelTitle in secondLevelTitles)
-                                            {
-                                                secondLevelNodes.Add(new BiographyDataNode
+                                                if (secondLevelParagraphs.Count != 0)
                                                 {
-                                                    Title = secondLevelTitle,
-                                                    Paragraph = FullSecondLevelParagraphs[0],
-                                                    Nodes = new List<BiographyDataNode>(thirdLevelNodes)
-                                                });
+                                                    FullSecondLevelParagraphs = CompleteParagraphs(secondLevelParagraphs);
+                                                }
+
+                                                FullThirdLevelParagraphs = CompleteParagraphs(thirdLevelParagraphs);
+
+                                                for (int c = 0; c < thirdLevelTitles.Count; c++)
+                                                {
+                                                    thirdLevelNodes.Add(new BiographyDataNode { Title = thirdLevelTitles[c], Paragraph = new List<string>(FullThirdLevelParagraphs[c]) });
+                                                }
+
+                                                foreach (string secondLevelTitle in secondLevelTitles)
+                                                {
+                                                    secondLevelNodes.Add(new BiographyDataNode
+                                                    {
+                                                        Title = secondLevelTitle,
+                                                        Paragraph = FullSecondLevelParagraphs[0],
+                                                        Nodes = new List<BiographyDataNode>(thirdLevelNodes)
+                                                    });
+                                                }
+
+                                                secondLevelTitles.Clear();
+                                                thirdLevelTitles.Clear();
+                                                secondLevelParagraphs.Clear();
+                                                thirdLevelParagraphs.Clear();
+                                                FullThirdLevelParagraphs.Clear();
                                             }
 
-                                            secondLevelTitles.Clear();
-                                            thirdLevelTitles.Clear();
-                                            secondLevelParagraphs.Clear();
-                                            thirdLevelParagraphs.Clear();
-                                            FullThirdLevelParagraphs.Clear();
-                                            thirdLevelNodes.Clear();
-
+                                            j = z - 1;
                                             break;
                                         }
-                                        else break;
 
-                                    }
-                                    else if (person.Biography[z + 2] == '^' && person.Biography[z + 3] == '^' && person.Biography[z + 4] == '^')
-                                    {
-                                        if (secondLevelParagraphsCounter != 0)
+                                        //Second level node
+                                        else if (person.Biography[z + 2] == '^' && person.Biography[z + 3] == '^' && person.Biography[z + 4] != '^')
                                         {
-                                            secondLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
-                                            secondLevelParagraphsCounter = 0;
+
+                                            if (secondLevelParagraphsCounter != 0 && thirdLevelTitles.Count == 0)
+                                            {
+                                                secondLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
+                                                secondLevelParagraphsCounter = 0;
+                                            }
+
+                                            if (thirdLevelTitles.Count != 0)
+                                            {
+                                                thirdLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
+                                                thirdLevelParagraphsCounter = 0;
+                                            }
+
+                                            j = z - 1;
+
+                                            if (thirdLevelTitles.Count != 0)
+                                            {
+
+                                                if (secondLevelParagraphs.Count != 0)
+                                                {
+                                                    FullSecondLevelParagraphs = CompleteParagraphs(secondLevelParagraphs);
+                                                }
+
+                                                FullThirdLevelParagraphs = CompleteParagraphs(thirdLevelParagraphs);
+
+                                                for (int c = 0; c < thirdLevelTitles.Count; c++)
+                                                {
+                                                    thirdLevelNodes.Add(new BiographyDataNode { Title = thirdLevelTitles[c], Paragraph = new List<string>(FullThirdLevelParagraphs[c]) });
+                                                }
+
+                                                foreach (string secondLevelTitle in secondLevelTitles)
+                                                {
+                                                    secondLevelNodes.Add(new BiographyDataNode
+                                                    {
+                                                        Title = secondLevelTitle,
+                                                        Paragraph = FullSecondLevelParagraphs[0],
+                                                        Nodes = new List<BiographyDataNode>(thirdLevelNodes)
+                                                    });
+                                                }
+
+                                                secondLevelTitles.Clear();
+                                                thirdLevelTitles.Clear();
+                                                secondLevelParagraphs.Clear();
+                                                thirdLevelParagraphs.Clear();
+                                                FullThirdLevelParagraphs.Clear();
+                                                thirdLevelNodes.Clear();
+
+                                                break;
+                                            }
+                                            else break;
+
                                         }
 
-                                        if (thirdLevelTitles.Count != 0)
+                                        //Third level node
+                                        else if (person.Biography[z + 2] == '^' && person.Biography[z + 3] == '^' && person.Biography[z + 4] == '^')
                                         {
-                                            thirdLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
-                                            thirdLevelParagraphsCounter = 0;
+                                            if (secondLevelParagraphsCounter != 0)
+                                            {
+                                                secondLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
+                                                secondLevelParagraphsCounter = 0;
+                                            }
+
+                                            if (thirdLevelTitles.Count != 0)
+                                            {
+                                                thirdLevelParagraphs.Add(person.Biography.Substring(j + 2, z - j));
+                                                thirdLevelParagraphsCounter = 0;
+                                            }
+
+                                            startIndex = z + 5;
+                                            stopIndex = z + 6;
+                                            while (person.Biography[stopIndex] != '\r')
+                                                stopIndex++;
+                                            thirdLevelTitles.Add(person.Biography.Substring(startIndex, stopIndex - startIndex));
+                                            j = stopIndex;
+                                            z = stopIndex;
+                                            thirdLevelParagraphsCounter++;
+
+                                            continue;
                                         }
-
-                                        startIndex = z + 5;
-                                        stopIndex = z + 6;
-                                        while (person.Biography[stopIndex] != '\r')
-                                            stopIndex++;
-                                        thirdLevelTitles.Add(person.Biography.Substring(startIndex, stopIndex - startIndex));
-                                        j = stopIndex;
-                                        z = stopIndex;
-                                        thirdLevelParagraphsCounter++;
-
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        if (thirdLevelTitles.Count == 0)
-                                            secondLevelParagraphsCounter++;
+                                        else
+                                        {
+                                            if (thirdLevelTitles.Count == 0)
+                                                secondLevelParagraphsCounter++;
+                                        }
                                     }
                                 }
-                            }
 
-                            else
-                            {
-                                firstLevelParagraphsCounter++;
-                            }
+                                else
+                                {
+                                    firstLevelParagraphsCounter++;
+                                }
 
+                            }
                         }
+
+                    }
+
+                //Add title for table of contents
+                BiographyData.Nodes.Add(new BiographyDataNode()
+                {
+                    Title = "References"
+                });
+
+            }
+
+            return BiographyData;
+        }
+
+        //Extract references
+        List<string> FindReferencesSection(Person person)
+        {
+            string refName = "^References";
+            List<string> References = new List<string>();
+
+            int referencesIndex = person.Biography.IndexOf(refName);
+            if (referencesIndex != -1)
+            {
+                for (int i = referencesIndex + (refName.Length + 2); i < person.Biography.Length; i++)
+                {
+                    if (i == person.Biography.Length - 1)
+                    {
+                        References.Add(person.Biography.Substring(referencesIndex + (refName.Length + 2), i - (referencesIndex + (refName.Length + 1))));
+                        person.Biography = person.Biography.Remove(referencesIndex);
+                        break;
                     }
 
                 }
             }
-            return BiographyData;
+
+            return CompleteParagraphs(References)[0];
+
         }
 
         // Break paragraph assosiated with particular heading into paragraphs
@@ -475,7 +528,7 @@ namespace Writers.Controllers
                         if (i == paragraph.Length - 2)
                         {
 
-                            Paragraphes.Add(paragraph.Substring(startIndex, i - startIndex + 1));
+                            Paragraphes.Add(paragraph.Substring(startIndex, i - startIndex + 2));
                             startIndex = 0;
                             stopIndex = 1;
                             break;
@@ -525,6 +578,7 @@ namespace Writers.Controllers
 
             for (int it = 0; it < person.Biography.Length - 1; it++)
             {
+                //Div block with image
                 if(person.Biography[it] == '~' && person.Biography[it + 1] == 'd' && person.Biography[it + 2] == 'i' && person.Biography[it + 3] == 'v')
                 {
                     person.Biography = person.Biography.Insert(it + 1, "<");
@@ -532,6 +586,7 @@ namespace Writers.Controllers
 
                     for (int i = it; i < person.Biography.Length - 1; i++)
                     {
+                        //Start of img tag
                         if (person.Biography[i] == '~' && person.Biography[i + 1] == 'i' && person.Biography[i + 2] == 'm' && person.Biography[i + 3] == 'g')
                         {
                             person.Biography = person.Biography.Remove(i, 1);
@@ -541,15 +596,17 @@ namespace Writers.Controllers
                             
                             for (int j = i; j < person.Biography.Length - 1; j++)
                             {
+                                //End of img tag
                                 if (person.Biography[j] == '~' && person.Biography[j + 1] == 'i' && person.Biography[j + 2] == 'm' && person.Biography[j + 3] == 'g')
                                 {
                                     person.Biography = person.Biography.Insert(j, "/");
                                     person.Biography = person.Biography.Insert(j + 1, ">");
                                     person.Biography = person.Biography.Remove(j + 2, 4);
 
+                                    //Extracting img description
                                     for (int z = j + 2; z < person.Biography.Length; z++)
                                     {
-                                        //char c = person.Biography[z];
+                                        //End of img description
                                         if (person.Biography[z] == '~' && person.Biography[z + 1] == 'd')
                                         {
                                             description = person.Biography.Substring(j + 2, z - (j + 2));
@@ -564,8 +621,6 @@ namespace Writers.Controllers
                                             j = person.Biography.Length - 2;
                                             it = z;
 
-                                            //char ch = person.Biography[z];
-
                                             break;
                                         }
                                     }
@@ -576,7 +631,100 @@ namespace Writers.Controllers
                     }
                 }
 
-                
+            }
+        }
+
+        void FindLinks(Person person)
+        {
+            for (int it = 0; it < person.Biography.Length - 1; it++)
+            {
+                //Ordered/Unordered list
+                if (person.Biography[it] == '~' && person.Biography[it + 1] == 'a')
+                {
+                    person.Biography = person.Biography.Remove(it, 1);
+                    person.Biography = person.Biography.Insert(it, "<");
+                    
+                    for (int i = it; i < person.Biography.Length - 1; i++)
+                    {
+                        //First list item
+                        if (person.Biography[i] == '~' && person.Biography[i + 1] == 't')
+                        {
+                            person.Biography = person.Biography.Remove(i - 1, 4);
+                            person.Biography = person.Biography.Insert(i - 1, ">");
+
+                            for (int j = i; j < person.Biography.Length - 1; j++)
+                            {
+                                if (person.Biography[j] == '~' && person.Biography[j + 1] == 'a')
+                                {
+                                    person.Biography = person.Biography.Remove(j - 1, 2);
+                                    person.Biography = person.Biography.Insert(j - 1, "</");
+                                    person.Biography = person.Biography.Insert(j + 2, ">");
+
+                                    it = j;
+                                    i = person.Biography.Length - 2;
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        void FindLists(Person person)
+        {
+            for (int it = 0; it < person.Biography.Length - 1; it++)
+            {
+                //Ordered/Unordered list
+                if ((person.Biography[it] == '~' && person.Biography[it + 1] == 'u' && person.Biography[it + 2] == 'l') || (person.Biography[it] == '~' && person.Biography[it + 1] == 'o' && person.Biography[it + 2] == 'l'))
+                {
+                    person.Biography = person.Biography.Remove(it, 1);
+                    person.Biography = person.Biography.Insert(it, "<");
+                    person.Biography = person.Biography.Insert(it + 3, ">");
+
+                    for (int i = it; i < person.Biography.Length - 1; i++)
+                    {
+
+                        //First list item
+                        if (person.Biography[i] == '~' && person.Biography[i + 1] == 'l' && person.Biography[i + 2] == 'i')
+                        {
+                            person.Biography = person.Biography.Remove(i - 1, 2);
+
+                            person.Biography = person.Biography.Insert(i - 1, "<");
+                            person.Biography = person.Biography.Insert(i + 2, ">");
+
+                            for (int j = i; j < person.Biography.Length - 1; j++)
+                            {
+                                if ((person.Biography[j] == '~' && person.Biography[j + 1] == 'u' && person.Biography[j + 2] == 'l') || (person.Biography[j] == '~' && person.Biography[j + 1] == 'o' && person.Biography[j + 2] == 'l'))
+                                {
+                                    person.Biography = person.Biography.Remove(j, 1);
+                                    person.Biography = person.Biography.Insert(j, "</");
+                                    person.Biography = person.Biography.Insert(j + 4, ">");
+                                    person.Biography = person.Biography.Insert(j, "</li>");
+
+                                    it = j;
+                                    i = person.Biography.Length - 2;
+                                    break;
+                                }
+
+                                //Next list item
+                                if (person.Biography[j] == '~' && person.Biography[j + 1] == 'l' && person.Biography[j + 2] == 'i')
+                                {
+                                    person.Biography = person.Biography.Remove(j, 1);
+                                    person.Biography = person.Biography.Insert(j, "<");
+                                    person.Biography = person.Biography.Insert(j + 3, ">");
+                                    person.Biography = person.Biography.Insert(j, "</li>");
+
+                                    i = j;
+
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
@@ -637,7 +785,7 @@ namespace Writers.Controllers
                 try
                 {
                     db.SaveChanges();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Details", new { id= id});
                 }
                 catch (DataException /*ex*/)
                 {
@@ -798,4 +946,39 @@ namespace Writers.Controllers
 //        paragraphsCountList.Add(paragraphsCounter);
 //    }
 //    return BiographyParagraphs;
+//}
+
+//IQueryable<Person> OrderByLastName(bool desc = false)
+//{
+//    var persons = db.Persons.Select(p => p);
+
+//    foreach (var person in persons)
+//    {
+//        person.FullName = SwapNameWords(person.FullName);
+//    }
+
+//    return persons.OrderBy(p => p.FullName);
+
+//}
+
+//string SwapNameWords(string personFullName, bool swapBack = false)
+//{
+//    string fullName = "";
+//    string lastName = "";
+
+//    if (!swapBack)
+//    {
+//        lastName = personFullName.Substring(personFullName.LastIndexOf(" ") + 1);
+//        fullName = personFullName.Remove(personFullName.LastIndexOf(" "));
+//        fullName = lastName + " " + fullName;
+//    }
+//    else
+//    {
+//        lastName = personFullName.Substring(0, personFullName.IndexOf(" "));
+//        fullName = personFullName.Remove(0, personFullName.IndexOf(" ") + 1);
+//        fullName = fullName + " " + lastName;
+//    }
+
+
+//    return fullName;
 //}
