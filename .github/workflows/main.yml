@@ -1,8 +1,7 @@
 name: GitHub Actions Test
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on:
-  repository_dispatch:
-    types: external-test
+  repository_dispatch
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
